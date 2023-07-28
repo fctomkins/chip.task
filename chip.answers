@@ -2,7 +2,7 @@ PugoMalum
 
 Task
 
-Happy path
+Happy path scenarios
 
 Given PurgoMalum web service is in use/ switched on
 When ‘fuck’ is entered as content (in the form of containsprofanity https://www.purgomalum.com/service/containsprofanity?text=fuck))
