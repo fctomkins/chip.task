@@ -1,0 +1,114 @@
+PugoMalum
+
+Task
+
+Happy path
+
+Given PurgoMalum web service is in use/ switched on
+When ‘fuck’ is entered as content (in the form of containsprofanity https://www.purgomalum.com/service/containsprofanity?text=fuck))
+Then the response returns ‘true’
+
+Given PurgoMalum web service is in use/ switched on
+When ‘fuck’ is entered as content (in the form of xml https://www.purgomalum.com/service/xml?text=fuck) 
+Then the response returns censored content
+
+Given PurgoMalum web service is in use/ switched on
+When ‘fuck’ is entered as content (in the form of JSON https://www.purgomalum.com/service/json?text=fuck) 
+Then the response returns censored content
+
+
+Given PurgoMalum web service is in use/ switched on
+When ‘fuck’ is entered as content (in the form of plain text
+https://www.purgomalum.com/service/plain?text=fuck)
+Then the response returns censored content
+
+Given PurgoMalum web service is in use/ switched on
+When ‘@ss’ is entered (or content using substitutive characters to create undesired words are entered) 
+Then the response returns ‘true’
+(https://www.purgomalum.com/service/containsprofanity?text=@ss)   
+
+Defects
+
+Given PurgoMalum web service is in use/ switched on
+When ‘śhit’ is entered (or content using substitutive characters to create undesired words are entered) 
+Then the response returns ‘true’
+(https://www.purgomalum.com/service/containsprofanity?text=śhit) 
+Failed - returns ‘false’ we need to add characters with diacritical marks as resembling characters.
+
+
+
+Given PurgoMalum web service is in use/ switched on
+When ‘ßitch’ is entered (or content using substitutive characters to create undesired content) 
+Then the response returns ‘true’
+(https://www.purgomalum.com/service/containsprofanity?text=ßitch)
+Failed - returns ‘false’  we need to account for characters that may not originate from the english language. 
+
+
+The spec tells us that characters such as ‘@’ and ‘$’ will be removed as they resemble ‘a’ and ‘s’ respectively as they can be used in replacement in order to form undesired content. Many defects can be found in the documentation. Here it was forgotten that there are characters with diacritical marks which can be used just as easily for the appearance of profanity, obscenity and other unwanted text. ( á, Ð, é, í, ó, ú, ý, ö, ś,š) are just a few, there is also ligature text such as æ,ß and œ to name a few. Both of these examples above return the result ‘false’ rather than ‘true’ 
+
+Given PurgoMalum web service is in use/ switched on
+When content regarding specific addresses containing a word from the profanity list, Example (Come to Sunny Scunthorpe’)
+Then these are marked as safe 
+And the content of a place name is displayed.
+(https://www.purgomalum.com/service/xml?text=come+to+sunny+scunthorpe) 
+Result: come to sunny s****horpe
+
+I tried this on a few examples ‘Penistone’ was displayed ‘Trailcock’ was partially display (trail****) as was ‘Scunthorpe’ (S****horpe), however Trailcock and Scunthorpe are place names and therefore should be accepted as safe. 
+
+Given PurgoMalum web service is in use
+When a user posts content in an alternate language from english 
+Then the undesired content is removed
+Example below is in Swedish, ‘Skit’ translates to ‘shit’
+(https://www.purgomalum.com/service/xml?text=Skit) 
+
+The spec has not defined if the use PurgoMalum is exclusively only providing its webservice in English, the acceptance criteria is unclear if other languages are catered for. 
+
+Given PurgoMalum web service is in use
+When a user posts content containing ableist language as profanity
+Then the undesired content is removed
+(https://www.purgomalum.com/service/containsprofanity?text=retard&add=retard) 
+
+The requirements talk about the removal of undesired content however I think a clearer refinement is required if the content should be removed or censored, if the content is censored it is still known that some harmful content has been shared, even if users do not know the specific content. If it is to be removed entirely this would be the safest way to proceed but misspellings may lead to a less than ideal user experience. 
+
+
+Question 1
+I spent about 2 hours on this, would have done more but timeboxed time spent on it as didn't think it would take so long to get 2 github accounts to work on 1 laptop. 
+If I had more time I would explore writing iterations of test scenarios in the different requests to see the results of the different responses in XML, JSON and Plain text. Also I would have written more happy path testing, rather than just negative scenarios. 
+
+
+Question 2
+At the moment I think it would be interesting to experiment with ChatGPT as I’m hearing many others are but i’ve not yet had the chance to
+
+Question 3
+I’ve not worked with microservices however I have seen demonstrations of how it works and had an explore switching on and off separate microservices. I found it interesting that the individual services were independent of one another. I assume this would mean that delivery of a range of products would go much more smoothly knowing only one service is affected, due to known dependencies and less regression of interlinking systems.
+
+I understand there are two types of contract testing, consumer driven and provider driven. In consumer driven testing you would have the user define the expected behaviour by means of test suites. Then the service provider would make the necessary functionality in order to allow for these tests to pass. This is then verified against those test suites that were initially created for validation of the functionality and performance. 
+Provider driven contract testing is where the roles are reversed so the service provider generates the tests and the user must then use the services as expected by the business. 
+With microservices contract testing can help prevent defects from regression testing and waiting for end to end testing suites to complete. 
+
+
+
+
+
+Question 4 - Write about yourself in JSON
+
+{
+“Fiona.tomkins”:
+{
+“Personality”:”quirky”,
+“numberOfPets”: 2,
+“Pets”:[
+	{“name”:”Socks”,”age”,”64 days”,”birthday”:”23/05/2023”},
+	{“name”: “Toast”,”age”,”64 days”,”birthday”:”23/05/2023”}
+	]
+“weirdFact”:”At Uni I was president of Tea drinking society”,
+“rightForTheJob”: “yes”
+}
+}
+ 
+
+
+Question 5
+
+
+I believe that both manual and automated testing are required in any tester's tool belt. Where there has in recent years been much emphasis on test automation, We need to be clear that manual testing still holds value and is necessary. Automated testing is the way forward, especially for continual confidence in your product as well as to help aid testers in regression testing over a multitude of systems. We should never knock the importance of manual testing as it allows the tester to interact with the product as a real user, automated tests can tell you that everything is functioning exactly as expected, but can it tell you the user interface has ghastly and sightly colours or that its took them far too long to realise what the next step was, or (and this is a personal pet peeve of mine) where the close button is for the ad that popped up, when you do not want to interact with it. User experience is the height of importance if the user is not happy then it's unlikely they will return, without manual testing that wouldn’t be the ability for us at the development phase to suggest improvements to get our users off to their best start with the experience we have to offer.  
